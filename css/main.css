@@ -1271,7 +1271,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ff6cd0;
+  background: #9514ff;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2646,16 +2646,16 @@ body {
   background-size: cover;
 }
 .content-wrap {
-  opacity: 0.9;
+  opacity: 0.5;
 }
 ​,
 .sidebar {
   background-color: transparent;
-  opacity: 0.9;
+  opacity: 0.5;
 }
 ​,
 .header-inner {
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.5);
 }
 a {
   cursor: url("/cursor/ayuda.cur"), auto;
