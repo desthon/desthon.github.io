@@ -1,0 +1,29 @@
+{
+  "name": "xinglie-game",
+  "version": "1.0.0",
+  "description": "xinglie's game",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xinglie/xinglie.github.io.git"
+  },
+  "keywords": [
+    "xinglie",
+    "magix",
+    "game"
+  ],
+  "author": "xinglie.lkf@taobao.com",
+  "license": "MIT",
+  "dependencies": {
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-uglify": "^2.1.2",
+    "gulp-watch": "^4.3.11",
+    "magix-combine": "3.1.x",
+    "typescript": "^2.3.2"
+  },
+  "bugs": {
+    "url": "https://github.com/xinglie/xinglie.github.io/issues"
+  },
+  "homepage": "https://github.com/xinglie/xinglie.github.io#readme"
+}

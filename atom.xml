@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Desthon的博客</title>
+  
+  <subtitle>真的，真的绕了好大一圈呢</subtitle>
+  <link href="https://www.example.com/atom.xml" rel="self"/>
+  
+  <link href="https://www.example.com/"/>
+  <updated>2023-09-17T00:33:04.000Z</updated>
+  <id>https://www.example.com/</id>
+  
+  <author>
+    <name>desthon</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>我的第一个博客</title>
+    <link href="https://www.example.com/114514/08/08/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2/"/>
+    <id>https://www.example.com/114514/08/08/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%9A%E5%AE%A2/</id>
+    <published>+114514-08-08T10:13:00.000Z</published>
+    <updated>2023-09-17T00:33:04.000Z</updated>
+    
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="/assets/css/APlayer.min.css"><script src="/assets/js/APlayer.min.js" class="aplayer-secondary-script-marker"></script><script class="meting-secondary-script-marker" src="/assets/js/Meting.min.js"></script><p>在1949年，人类发现了味精；在2023年，太太乐发明了鸡精。（bushi）<br>这是我的第一个博客，虽然搭建的过程中有很多困难，但我最终都一一克服了。能写出这样一篇在自己网站上的文章，我十分激动与喜悦，但他们无法用语言说出。<br>就说到这里吧。</p><div id="binft"></div>  <script>    var binft = function (r) {      function t() {        return b[Math.floor(Math.random() * b.length)]      }        function e() {        return String.fromCharCode(94 * Math.random() + 33)      }      function n(r) {        for (var n = document.createDocumentFragment(), i = 0; r > i; i++) {          var l = document.createElement("span");          l.textContent = e(), l.style.color = t(), n.appendChild(l)        }        return n      }      function i() {        var t = o[c.skillI];        c.step ? c.step-- : (c.step = g, c.prefixP < l.length ? (c.prefixP >= 0 && (c.text += l[c.prefixP]), c.prefixP++) : "forward" === c.direction ? c.skillP < t.length ? (c.text += t[c.skillP], c.skillP++) : c.delay ? c.delay-- : (c.direction = "backward", c.delay = a) : c.skillP > 0 ? (c.text = c.text.slice(0, -1), c.skillP--) : (c.skillI = (c.skillI + 1) % o.length, c.direction = "forward")), r.textContent = c.text, r.appendChild(n(c.prefixP < l.length ? Math.min(s, s + c.prefixP) : Math.min(s, t.length - c.skillP))), setTimeout(i, d)      }      var l = "",      o = ["吾心吾行澄如明镜 所作所为皆为正义", "越是玩弄计谋，就越会发现人类的能力是有极限的","人类的赞歌就是勇气的赞歌 人类的伟大就是勇气的伟大", "两个囚犯从监狱的窗户往外看，一个看到了泥地，一个看到了星星","人行道上不是很宽敞吗","勇于交出『一切』的人，最后才能得到真正的『一切』","敬下一个遗体及终点"].map(function (r) {      return r + ""      }),      a = 2,      g = 1,      s = 5,      d = 75,      b = ["rgb(110,64,170)", "rgb(150,61,179)", "rgb(191,60,175)", "rgb(228,65,157)", "rgb(254,75,131)", "rgb(255,94,99)", "rgb(255,120,71)", "rgb(251,150,51)", "rgb(226,183,47)", "rgb(198,214,60)", "rgb(175,240,91)", "rgb(127,246,88)", "rgb(82,246,103)", "rgb(48,239,130)", "rgb(29,223,163)", "rgb(26,199,194)", "rgb(35,171,216)", "rgb(54,140,225)", "rgb(76,110,219)", "rgb(96,84,200)"],      c = {        text: "",        prefixP: -s,        skillI: 0,        skillP: 0,        direction: "forward",        delay: a,        step: g      };      i()      };      binft(document.getElementById('binft'));  </script>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;/assets/css/APlayer.min.css&quot;&gt;&lt;script src=&quot;/assets/js/APlayer.min.js&quot; cla</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>

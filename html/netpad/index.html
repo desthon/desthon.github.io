@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="user-scalable=no">
+    <meta charset="UTF-8">
+    <meta name="keywords" content="网络画板,数学实验,动态几何,几何,几何画板,超级画板,画板,智能教育">
+    <meta name="description" content="网络画板|开放、共享的数学实验室">
+
+    <title>网络画板|开放、共享的数学实验室</title>
+    <script src="static/js/tingyun-rum.js"></script>
+
+
+    <link rel="stylesheet" href="static/css/katex.min.css">
+    <link rel="stylesheet" href="static/css/zTreeStyle.css">
+    <link rel="stylesheet" href="static/css/font-awesome.min.css">
+    <link rel="stylesheet" href="static/css/froalaEditor.css">
+    <link rel="stylesheet" href="static/css/style.css">
+    <link rel="stylesheet" href="static/css/iconfont.css">
+    <link rel="stylesheet" href="static/css/iconfont1.css">
+    <link rel="stylesheet" href="static/css/iconfont2.css">
+
+    <style>
+        html {
+            font-size: 14px !important;
+        }
+        
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        .shareLink:hover{
+            cursor: pointer;
+            text-decoration:underline;
+        }
+    </style>
+
+</head>
+
+<body style="overflow: hidden;min-width: 480px;">
+    <script src="static/js/loadingStatus.js"></script>
+    <script>
+        npLoadingStatus.loading();
+    </script>
+    <script src="static/js/index.js"></script>
+    <script src="static/js/index1.js"></script>
+    <script src="static/js/ResourceCard.min.js"></script>
+    <script src="static/js/PackageCard.min.js"></script>
+    <script src="static/js/index2.js"></script>
+
+    <div id="netpadNav" style="display: flex;justify-content: space-between;align-items: center;height: 34px;background: #222"></div>
+    <div id="contentBody" style="height:calc(100% - 34px)"></div>
+
+
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/js/underscore-min.js"></script>
+    <script src="static/js/backbone-min.js"></script>
+    <script src="static/js/katex.min.js"></script>
+    <script>
+        if (!window.np) window.np = {}
+    </script>
+    <script src="static/js/np.EventDispatcher.js"></script>
+
+    <script src="static/js/sylvester.js"></script>
+    <script src="static/js/three.js"></script>
+    <script src="static/js/stats.min.js"></script>
+    <script src="static/js/LineSegmentsGeometry.js"></script>
+    <script src="static/js/LineGeometry.js"></script>
+    <script src="static/js/WireframeGeometry2.js"></script>
+    <script src="static/js/LineMaterial.js"></script>
+    <script src="static/js/LineSegments2.js"></script>
+    <script src="static/js/Line2.js"></script>
+    <script src="static/js/Wireframe.js"></script>
+    <script src="static/js/Detector.js"></script>
+
+    <script src="static/js/layer.js"></script>
+    <script src="static/js/jquery.ztree.all.js"></script>
+    <script src="static/js/jquery.ztree.exhide.js"></script>
+
+    <script src="static/js/math.min.js"></script>
+    <script src="static/js/npAlgebraic.js"></script>
+    <script src="static/js/npGeo.js"></script>
+    <script src="static/js/np.resizeDiv.js"></script>
+    <script src="static/js/froalaEditor.js"></script>
+    <script src="static/js/NetpadPreview.min.js"></script>
+    <script src="static/js/NetpadSlide.min.js"></script>
+    <script src="static/js/NetpadEditor.min.js"></script>
+
+    <!--加密解密离线文件-->
+    <script src="static/js/crypto-js.js"></script>
+    <script src="static/js/FileSaver.js"></script>
+    <script src="static/js/qrcode.min.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/service_worker/rootSW.js', {
+                    scope: '/'
+                })
+                .then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(err => console.log('ServiceWorker registration failed: ', err));
+        }
+    </script>
+
+<script src="static/js/Editor.js"></script></body>
+
+</html>
