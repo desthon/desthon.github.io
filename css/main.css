@@ -1271,7 +1271,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #96a15e;
+  background: #ff6cd0;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2643,7 +2643,7 @@ body {
   background-image: url("/images/background.png");
   background-repeat: no-repeat;
   background-attachment: fixed;
-  background-size: 100% 100%;
+  background-size: cover;
 }
 .content-wrap {
   opacity: 0.9;
@@ -2742,4 +2742,7 @@ button.botui-actions-buttons-button {
 # 修改增加新的css样式,
 .submenu-item {
   margin-left: 10%;
+}
+body .main {
+  margin-bottom: 45px;
 }
