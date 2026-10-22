@@ -3,6 +3,7 @@ import '../styles/global.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import Lightbox from '../components/Lightbox.astro';
+import Live2D from '../components/Live2D.astro';
 import { SITE, formatDate } from '../consts';
 
 interface Props {
@@ -113,6 +114,7 @@ const jsonLd =
     </main>
     <SiteFooter />
     <Lightbox />
+    <Live2D />
 
     <script>
       // 主题切换

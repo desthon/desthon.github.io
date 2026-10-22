@@ -1506,79 +1506,52 @@ html:not(.js) .reveal {
    美图：立绘卡 / 相册 / 大图查看 / 横幅
    ============================================================ */
 
-/* 英雄区立绘卡 */
-.portrait-card {
+/* 英雄区：横版大图 + 徽记 */
+.hero--wide {
   position: relative;
-  margin: 0;
-  width: min(94%, 440px);
-  padding: 10px;
-  border-radius: 26px;
-  border: 1px solid rgba(255, 255, 255, 0.26);
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.2), rgba(127, 216, 236, 0.1));
-  box-shadow: 0 44px 90px -44px rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(6px);
-}
-
-.portrait-open {
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  border-radius: 18px;
   overflow: hidden;
-  background: linear-gradient(170deg, #0e2f52, #071a2e);
-  cursor: zoom-in;
+  isolation: isolate;
+  background: #06182b;
 }
 
-.portrait-open img {
-  display: block;
-  width: 100%;
-  height: auto;
-  transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.portrait-card:hover .portrait-open img {
-  transform: scale(1.03);
-}
-
-.portrait-card figcaption {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 14px 10px 4px;
-}
-
-.portrait-name {
-  font-family: var(--font-display);
-  font-size: 1.04rem;
-  letter-spacing: 0.04em;
-  color: var(--ink-invert);
-}
-
-.portrait-note {
-  font-size: 0.68rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--aqua);
-}
-
-.portrait-badge {
+.hero-photo {
   position: absolute;
-  left: -24px;
-  top: -24px;
-  width: 88px;
-  height: 88px;
-  border-radius: 50%;
-  overflow: hidden;
-  background: #0b2039;
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 12px 34px -14px rgba(0, 0, 0, 0.7);
+  inset: 0;
+  z-index: -2;
 }
 
-.portrait-badge svg {
+.hero-photo img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
+  object-position: 52% 26%;
+}
+
+.hero-veil {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(100deg, rgba(5, 17, 31, 0.95) 0%, rgba(5, 17, 31, 0.82) 36%, rgba(5, 17, 31, 0.34) 74%, rgba(5, 17, 31, 0.58) 100%),
+    linear-gradient(180deg, rgba(5, 17, 31, 0.55) 0%, rgba(5, 17, 31, 0.05) 34%, rgba(5, 17, 31, 0.78) 100%);
+}
+
+.hero--wide {
+  padding-top: clamp(32px, 5vw, 64px);
+  padding-bottom: clamp(88px, 11vw, 140px);
+}
+
+.hero--wide .hero-grid {
+  min-height: clamp(420px, 56vh, 520px);
+  align-items: center;
+}
+
+.hero--wide .emblem-wrap {
+  opacity: 0.94;
+}
+
+.hero--wide .emblem {
+  width: min(100%, 340px);
 }
 
 /* 相册网格（瀑布流） */
@@ -1894,17 +1867,6 @@ body.lightbox-open {
 }
 
 @media (max-width: 860px) {
-  .portrait-card {
-    width: min(82%, 340px);
-  }
-
-  .portrait-badge {
-    width: 68px;
-    height: 68px;
-    left: -16px;
-    top: -16px;
-  }
-
   .gallery {
     columns: 2 210px;
   }
@@ -1930,5 +1892,137 @@ body.lightbox-open {
 
   .lightbox-nav {
     display: none;
+  }
+}
+
+
+/* ============================================================
+   看板娘：芙宁娜 Live2D
+   ============================================================ */
+.live2d-widget {
+  position: fixed;
+  right: 14px;
+  bottom: 0;
+  z-index: 80;
+  width: 268px;
+  height: 386px;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  animation: live2d-float 7.5s ease-in-out infinite;
+}
+
+.live2d-widget[hidden] {
+  display: none;
+}
+
+.live2d-widget.is-ready {
+  opacity: 1;
+  transform: none;
+}
+
+.live2d-widget::before {
+  content: '';
+  position: absolute;
+  inset: auto -6% -2% -6%;
+  height: 58%;
+  z-index: -1;
+  background: radial-gradient(
+    58% 68% at 50% 100%,
+    color-mix(in srgb, var(--pearl) 78%, transparent),
+    transparent 72%
+  );
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.live2d-widget canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  filter: drop-shadow(0 18px 26px rgba(8, 26, 44, 0.28));
+}
+
+.live2d-widget canvas:active {
+  cursor: grabbing;
+}
+
+.live2d-close {
+  position: absolute;
+  top: 6px;
+  right: 4px;
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 84%, transparent);
+  color: var(--ink-3);
+  font-size: 15px;
+  line-height: 1;
+  opacity: 0;
+  transition: opacity 0.25s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.live2d-widget:hover .live2d-close,
+.live2d-close:focus-visible {
+  opacity: 1;
+}
+
+.live2d-close:hover {
+  color: var(--hydro-deep);
+  transform: scale(1.08);
+}
+
+.live2d-tip {
+  position: absolute;
+  right: 10px;
+  bottom: calc(100% - 44px);
+  max-width: 208px;
+  padding: 9px 13px;
+  border-radius: 14px 14px 5px 14px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--ink-2);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+}
+
+.live2d-tip.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+@keyframes live2d-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+@media (max-width: 900px) {
+  .live2d-widget {
+    display: none;
+  }
+
+  .hero--wide .emblem {
+    width: min(100%, 210px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live2d-widget {
+    animation: none;
+    transition: none;
   }
 }

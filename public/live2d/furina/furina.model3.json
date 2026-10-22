@@ -1,0 +1,84 @@
+{
+ "Version": 3,
+ "FileReferences": {
+  "Moc": "furina.moc3",
+  "Textures": [
+   "texture_00.png"
+  ],
+  "Physics": "furina.physics3.json",
+  "DisplayInfo": "furina.cdi3.json",
+  "Expressions": [
+   {
+    "Name": "shy",
+    "File": "expressions/shy.exp3.json"
+   },
+   {
+    "Name": "surprised",
+    "File": "expressions/surprised.exp3.json"
+   },
+   {
+    "Name": "wronged",
+    "File": "expressions/wronged.exp3.json"
+   },
+   {
+    "Name": "angry",
+    "File": "expressions/angry.exp3.json"
+   },
+   {
+    "Name": "star",
+    "File": "expressions/star.exp3.json"
+   },
+   {
+    "Name": "dark",
+    "File": "expressions/dark.exp3.json"
+   },
+   {
+    "Name": "blank",
+    "File": "expressions/blank.exp3.json"
+   }
+  ],
+  "Motions": {
+   "Idle": [
+    {
+     "File": "motions/idle_01.motion3.json",
+     "FadeInTime": 1.0,
+     "FadeOutTime": 1.0
+    }
+   ],
+   "TapBody": [
+    {
+     "File": "motions/tap_01.motion3.json",
+     "FadeInTime": 0.4,
+     "FadeOutTime": 0.6
+    },
+    {
+     "File": "motions/tap_02.motion3.json",
+     "FadeInTime": 0.4,
+     "FadeOutTime": 0.6
+    },
+    {
+     "File": "motions/tap_03.motion3.json",
+     "FadeInTime": 0.4,
+     "FadeOutTime": 0.6
+    }
+   ]
+  }
+ },
+ "Groups": [
+  {
+   "Target": "Parameter",
+   "Name": "EyeBlink",
+   "Ids": [
+    "ParamEyeLOpen",
+    "ParamEyeROpen"
+   ]
+  },
+  {
+   "Target": "Parameter",
+   "Name": "LipSync",
+   "Ids": [
+    "ParamMouthForm"
+   ]
+  }
+ ]
+}

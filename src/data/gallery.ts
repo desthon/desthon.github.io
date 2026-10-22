@@ -3,7 +3,7 @@ export interface Shot {
   file: string;
   title: string;
   caption: string;
-  category: '立绘' | '壁纸' | '卡面' | '官图';
+  category: '立绘' | '壁纸' | '卡面' | '官图' | '同人';
   width: number;
   height: number;
 }
@@ -83,6 +83,22 @@ export const GALLERY: Shot[] = [
     height: 900,
   },
   {
+    file: 'fan-miyoushe-1.webp',
+    title: '同人绘 · 水色',
+    caption: '米游社同人作品，水光沿着裙摆流下去。',
+    category: '同人',
+    width: 1600,
+    height: 959,
+  },
+  {
+    file: 'fan-miyoushe-2.webp',
+    title: '同人绘 · 舞台',
+    caption: '另一张横版同人，像谢幕后仍亮着的灯。',
+    category: '同人',
+    width: 1600,
+    height: 1093,
+  },
+  {
     file: 'intro-banner.webp',
     title: '登场横幅',
     caption: '幕布升起的那一刻，枫丹所有水都静了。',
@@ -92,7 +108,7 @@ export const GALLERY: Shot[] = [
   },
 ];
 
-export const CATEGORIES = ['立绘', '壁纸', '卡面', '官图'] as const;
+export const CATEGORIES = ['立绘', '壁纸', '卡面', '官图', '同人'] as const;
 
 export const HERO_SHOT = {
   file: 'hero-furina.webp',

@@ -1,0 +1,154 @@
+---
+// 看板娘：芙宁娜 Live2D（Cubism 4，pixi.js + pixi-live2d-display）
+// 资源全部自托管在 public/live2d/，模型约 14MB，按需懒加载。
+---
+<div class="live2d-widget" id="furina-live2d" hidden aria-hidden="true">
+  <canvas id="furina-live2d-canvas"></canvas>
+  <p class="live2d-tip" id="furina-live2d-tip" role="status"></p>
+  <button class="live2d-close" id="furina-live2d-close" type="button" aria-label="收起看板娘">×</button>
+</div>
+
+<script>
+  const STORAGE_KEY = 'furina-live2d';
+  const MODEL_URL = '/live2d/furina/furina.model3.json';
+  const VENDOR = [
+    '/live2d/vendor/live2dcubismcore.min.js',
+    '/live2d/vendor/pixi.min.js',
+    '/live2d/vendor/pixi-live2d-display-cubism4.min.js',
+  ];
+
+  const root = document.getElementById('furina-live2d');
+  const canvas = document.getElementById('furina-live2d-canvas') as HTMLCanvasElement | null;
+  const tip = document.getElementById('furina-live2d-tip');
+  const closer = document.getElementById('furina-live2d-close');
+
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const saveData = (navigator as unknown as { connection?: { saveData?: boolean } }).connection?.saveData === true;
+  const dismissed = localStorage.getItem(STORAGE_KEY) === 'off';
+
+  const loadScript = (src: string) =>
+    new Promise<void>((resolve, reject) => {
+      const el = document.createElement('script');
+      el.src = src;
+      el.async = false;
+      el.onload = () => resolve();
+      el.onerror = () => reject(new Error(src));
+      document.head.appendChild(el);
+    });
+
+  const say = (text: string, ms = 5200) => {
+    if (!tip) return;
+    tip.textContent = text;
+    tip.classList.add('is-on');
+    window.setTimeout(() => tip.classList.remove('is-on'), ms);
+  };
+
+  const boot = async () => {
+    if (!root || !canvas) return;
+    try {
+      for (const src of VENDOR) await loadScript(src);
+    } catch {
+      return;
+    }
+
+    const PIXI = (window as unknown as { PIXI?: any }).PIXI;
+    if (!PIXI?.live2d) return;
+
+    const W = 268;
+    const H = 386;
+    const app = new PIXI.Application({
+      view: canvas,
+      width: W,
+      height: H,
+      backgroundAlpha: 0,
+      antialias: true,
+      autoDensity: true,
+      resolution: Math.min(2, window.devicePixelRatio || 1),
+    });
+
+    let model: any;
+    try {
+      model = await PIXI.live2d.Live2DModel.from(MODEL_URL, { autoInteract: false });
+    } catch {
+      app.destroy(true);
+      return;
+    }
+
+    app.stage.addChild(model);
+    // 以模型内部画布高度为基准取景：1.04 倍高度、居中，头顶留一点气口
+    const inner = model.internalModel;
+    model.scale.set((H * 1.04) / inner.height);
+    model.anchor.set(0.5, 0.5);
+    model.position.set(W / 2, H / 2);
+
+    root.hidden = false;
+    requestAnimationFrame(() => root.classList.add('is-ready'));
+
+    // 视线跟随
+    const focus = (event: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      model.focus(event.clientX - rect.left, event.clientY - rect.top);
+    };
+    window.addEventListener('pointermove', focus, { passive: true });
+
+    // 点击换表情（模型自带 7 个 exp3）
+    const moods = ['shy', 'surprised', 'wronged', 'star', 'angry', 'blank'];
+    const lines = [
+      '水会记得一切。',
+      '今天也来看我了？',
+      '别把这里弄湿了。',
+      '谢幕之后，才是我的时间。',
+      '要一起去看海吗？',
+    ];
+    let tapIndex = 0;
+    canvas.style.pointerEvents = 'auto';
+    canvas.addEventListener('click', () => {
+      const mood = moods[Math.floor(Math.random() * moods.length)];
+      try {
+        model.expression(mood);
+      } catch {
+        /* 模型没有该表情时忽略 */
+      }
+      say(lines[tapIndex++ % lines.length]);
+    });
+
+    if (!reduced) say('欢迎来到花园。点我一下试试。', 6000);
+
+    // 呼吸感：小幅度参数驱动，若被物理覆盖也无副作用
+    const core = model.internalModel?.coreModel;
+    if (core && !reduced) {
+      const start = performance.now();
+      app.ticker.add(() => {
+        const t = (performance.now() - start) / 1000;
+        try {
+          core.setParameterValueById('ParamBreath', 0.5 + 0.5 * Math.sin(t * 1.5));
+        } catch {
+          /* 忽略缺失参数 */
+        }
+      });
+    }
+
+    closer?.addEventListener('click', () => {
+      localStorage.setItem(STORAGE_KEY, 'off');
+      root.classList.remove('is-ready');
+      window.setTimeout(() => {
+        root.hidden = true;
+        model.destroy?.();
+        app.destroy(true);
+      }, 400);
+    });
+
+    (window as unknown as { __furinaLive2D?: boolean }).__furinaLive2D = true;
+  };
+
+  const start = () => {
+    if (dismissed || saveData || window.innerWidth < 900) return;
+    const idle = (window as unknown as { requestIdleCallback?: (cb: () => void) => void })
+      .requestIdleCallback;
+    if (idle) idle(() => void boot());
+    else window.setTimeout(() => void boot(), 1200);
+  };
+
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start, { once: true });
+</script>

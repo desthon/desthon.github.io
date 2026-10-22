@@ -24,7 +24,12 @@ for (const post of posts) {
 const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 14);
 ---
 <BaseLayout description={SITE.description}>
-  <section class="hero">
+  <section class="hero hero--wide">
+    <div class="hero-photo" aria-hidden="true">
+      <img src="/images/hero-wide.webp" alt="" fetchpriority="high" decoding="async" />
+    </div>
+    <div class="hero-veil" aria-hidden="true"></div>
+
     <div class="shell hero-grid">
       <div class="hero-copy">
         <span class="eyebrow hero-eyebrow">Personal Blog · 芙宁娜主题</span>
@@ -55,33 +60,7 @@ const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 14);
         <span class="bubble"></span>
         <span class="bubble"></span>
 
-        <figure class="portrait-card">
-          <button
-            class="portrait-open"
-            type="button"
-            data-lightbox
-            data-src="/images/gallery/splash.webp"
-            data-title={HERO_SHOT.title}
-            data-caption="她举起权杖，法庭的灯亮了一半。"
-            aria-label="查看芙宁娜立绘大图"
-          >
-            <img
-              src={`/images/${HERO_SHOT.file}`}
-              alt="芙宁娜角色立绘"
-              width={HERO_SHOT.width}
-              height={HERO_SHOT.height}
-              fetchpriority="high"
-              decoding="async"
-            />
-          </button>
-          <figcaption>
-            <span class="portrait-name">{HERO_SHOT.title}</span>
-            <span class="portrait-note">{HERO_SHOT.note}</span>
-          </figcaption>
-          <span class="portrait-badge" aria-hidden="true">
-            <HydroEmblem />
-          </span>
-        </figure>
+        <HydroEmblem />
       </div>
     </div>
 
