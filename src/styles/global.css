@@ -1948,32 +1948,82 @@ body.lightbox-open {
   cursor: grabbing;
 }
 
-.live2d-close {
+.live2d-stage {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.live2d-widget.is-dragging {
+  animation: none;
+  cursor: grabbing;
+}
+
+.live2d-widget.is-dragging .live2d-stage {
+  cursor: grabbing;
+}
+
+.live2d-toolbar {
   position: absolute;
-  top: 6px;
-  right: 4px;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  width: max-content;
+  margin: 0 auto;
+  display: flex;
+  gap: 4px;
+  padding: 5px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+.live2d-widget:hover .live2d-toolbar,
+.live2d-widget:focus-within .live2d-toolbar {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.live2d-toolbar button {
   width: 27px;
   height: 27px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  border: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface) 84%, transparent);
-  color: var(--ink-3);
-  font-size: 15px;
-  line-height: 1;
-  opacity: 0;
-  transition: opacity 0.25s ease, color 0.2s ease, transform 0.2s ease;
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.live2d-widget:hover .live2d-close,
-.live2d-close:focus-visible {
-  opacity: 1;
-}
-
-.live2d-close:hover {
+.live2d-toolbar button:hover {
+  background: var(--hydro-soft);
   color: var(--hydro-deep);
-  transform: scale(1.08);
+  transform: translateY(-1px);
+}
+
+.live2d-toolbar button:focus-visible {
+  outline: 2px solid var(--hydro);
+  outline-offset: 1px;
+}
+
+.live2d-toolbar svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .live2d-tip {

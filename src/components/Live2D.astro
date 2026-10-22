@@ -1,15 +1,57 @@
 ---
 // 看板娘：芙宁娜 Live2D（Cubism 4，pixi.js + pixi-live2d-display）
 // 资源全部自托管在 public/live2d/，模型约 14MB，按需懒加载。
+// 支持：拖拽摆放（位置记忆）、表情/台词/缩放/归位/收起 五个按钮、视线跟随。
 ---
 <div class="live2d-widget" id="furina-live2d" hidden aria-hidden="true">
-  <canvas id="furina-live2d-canvas"></canvas>
+  <div class="live2d-stage" id="furina-live2d-stage">
+    <canvas id="furina-live2d-canvas"></canvas>
+  </div>
+
   <p class="live2d-tip" id="furina-live2d-tip" role="status"></p>
-  <button class="live2d-close" id="furina-live2d-close" type="button" aria-label="收起看板娘">×</button>
+
+  <div class="live2d-toolbar" id="furina-live2d-toolbar" role="toolbar" aria-label="看板娘控制">
+    <button type="button" data-act="mood" title="换个表情" aria-label="换个表情">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="8.4"></circle>
+        <path d="M8.7 10.3h.01M15.3 10.3h.01M8.9 14.4c.9 1.2 2 1.8 3.1 1.8s2.2-.6 3.1-1.8"></path>
+      </svg>
+    </button>
+    <button type="button" data-act="talk" title="说句话" aria-label="说句话">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 12.4c0 3.6-3.6 6.5-8 6.5-1 0-2-.1-2.9-.4L5 20l1.1-3.4C4.8 15.4 4 14 4 12.4 4 8.8 7.6 6 12 6s8 2.8 8 6.4z"></path>
+        <path d="M9 12.3h6"></path>
+      </svg>
+    </button>
+    <button type="button" data-act="zoom-in" title="放大" aria-label="放大">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="10.8" cy="10.8" r="6.2"></circle>
+        <path d="M15.4 15.4 20 20M10.8 8.2v5.2M8.2 10.8h5.2"></path>
+      </svg>
+    </button>
+    <button type="button" data-act="zoom-out" title="缩小" aria-label="缩小">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="10.8" cy="10.8" r="6.2"></circle>
+        <path d="M15.4 15.4 20 20M8.2 10.8h5.2"></path>
+      </svg>
+    </button>
+    <button type="button" data-act="reset" title="回到右下角" aria-label="回到右下角">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19 12a7 7 0 1 1-2.4-5.3"></path>
+        <path d="M19 4.5V9h-4.5"></path>
+      </svg>
+    </button>
+    <button type="button" data-act="hide" title="收起看板娘" aria-label="收起看板娘">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 7l10 10M17 7 7 17"></path>
+      </svg>
+    </button>
+  </div>
 </div>
 
 <script>
   const STORAGE_KEY = 'furina-live2d';
+  const POS_KEY = 'furina-live2d-pos';
   const MODEL_URL = '/live2d/furina/furina.model3.json';
   const VENDOR = [
     '/live2d/vendor/live2dcubismcore.min.js',
@@ -18,9 +60,10 @@
   ];
 
   const root = document.getElementById('furina-live2d');
+  const stage = document.getElementById('furina-live2d-stage');
   const canvas = document.getElementById('furina-live2d-canvas') as HTMLCanvasElement | null;
+  const toolbar = document.getElementById('furina-live2d-toolbar');
   const tip = document.getElementById('furina-live2d-tip');
-  const closer = document.getElementById('furina-live2d-close');
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const saveData = (navigator as unknown as { connection?: { saveData?: boolean } }).connection?.saveData === true;
@@ -36,11 +79,13 @@
       document.head.appendChild(el);
     });
 
+  let tipTimer = 0;
   const say = (text: string, ms = 5200) => {
     if (!tip) return;
     tip.textContent = text;
     tip.classList.add('is-on');
-    window.setTimeout(() => tip.classList.remove('is-on'), ms);
+    window.clearTimeout(tipTimer);
+    tipTimer = window.setTimeout(() => tip.classList.remove('is-on'), ms);
   };
 
   const boot = async () => {
@@ -75,23 +120,120 @@
     }
 
     app.stage.addChild(model);
-    // 以模型内部画布高度为基准取景：1.04 倍高度、居中，头顶留一点气口
-    const inner = model.internalModel;
-    model.scale.set((H * 1.04) / inner.height);
-    model.anchor.set(0.5, 0.5);
-    model.position.set(W / 2, H / 2);
+    const baseScale = (H * 1.04) / model.internalModel.height;
+    let zoom = 1;
+
+    const frame = () => {
+      model.scale.set(baseScale * zoom);
+      model.anchor.set(0.5, 0.5);
+      model.position.set(W / 2, H / 2);
+    };
+    frame();
 
     root.hidden = false;
     requestAnimationFrame(() => root.classList.add('is-ready'));
 
-    // 视线跟随
-    const focus = (event: PointerEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      model.focus(event.clientX - rect.left, event.clientY - rect.top);
+    /* ---------- 位置：拖拽 + 记忆 ---------- */
+    const clamp = (x: number, y: number) => {
+      const r = root.getBoundingClientRect();
+      const maxX = Math.max(4, window.innerWidth - r.width - 4);
+      const maxY = Math.max(4, window.innerHeight - r.height - 4);
+      return { x: Math.min(Math.max(4, x), maxX), y: Math.min(Math.max(4, y), maxY) };
     };
-    window.addEventListener('pointermove', focus, { passive: true });
 
-    // 点击换表情（模型自带 7 个 exp3）
+    const place = (x: number, y: number) => {
+      const p = clamp(x, y);
+      root.style.left = `${p.x}px`;
+      root.style.top = `${p.y}px`;
+      root.style.right = 'auto';
+      root.style.bottom = 'auto';
+      return p;
+    };
+
+    const savePos = () => {
+      try {
+        localStorage.setItem(
+          POS_KEY,
+          JSON.stringify({ x: parseFloat(root.style.left), y: parseFloat(root.style.top) }),
+        );
+      } catch {
+        /* 存储不可用时忽略 */
+      }
+    };
+
+    const resetPos = () => {
+      root.style.left = '';
+      root.style.top = '';
+      root.style.right = '';
+      root.style.bottom = '';
+      localStorage.removeItem(POS_KEY);
+    };
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(POS_KEY) || 'null') as { x: number; y: number } | null;
+      if (saved && Number.isFinite(saved.x) && Number.isFinite(saved.y)) place(saved.x, saved.y);
+    } catch {
+      /* 位置数据损坏则忽略 */
+    }
+
+    window.addEventListener('resize', () => {
+      if (root.style.left) {
+        place(parseFloat(root.style.left), parseFloat(root.style.top));
+        savePos();
+      }
+    });
+
+    let dragging = false;
+    let moved = false;
+    let startX = 0;
+    let startY = 0;
+    let originX = 0;
+    let originY = 0;
+
+    stage?.addEventListener('pointerdown', (event: PointerEvent) => {
+      if (event.button !== 0) return;
+      const rect = root.getBoundingClientRect();
+      dragging = true;
+      moved = false;
+      startX = event.clientX;
+      startY = event.clientY;
+      originX = rect.left;
+      originY = rect.top;
+      root.classList.add('is-dragging');
+      stage.setPointerCapture?.(event.pointerId);
+      event.preventDefault();
+    });
+
+    stage?.addEventListener('pointermove', (event: PointerEvent) => {
+      if (!dragging) return;
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
+      if (!moved && Math.hypot(dx, dy) > 4) moved = true;
+      if (moved) place(originX + dx, originY + dy);
+    });
+
+    const endDrag = (event: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      root.classList.remove('is-dragging');
+      stage?.releasePointerCapture?.(event.pointerId);
+      if (moved) savePos();
+    };
+    stage?.addEventListener('pointerup', endDrag);
+    stage?.addEventListener('pointercancel', endDrag);
+
+    /* ---------- 视线跟随 ---------- */
+    window.addEventListener(
+      'pointermove',
+      (event) => {
+        if (dragging) return;
+        const rect = canvas.getBoundingClientRect();
+        model.focus(event.clientX - rect.left, event.clientY - rect.top);
+      },
+      { passive: true },
+    );
+
+    /* ---------- 表情与台词 ---------- */
     const moods = ['shy', 'surprised', 'wronged', 'star', 'angry', 'blank'];
     const lines = [
       '水会记得一切。',
@@ -99,44 +241,86 @@
       '别把这里弄湿了。',
       '谢幕之后，才是我的时间。',
       '要一起去看海吗？',
+      '五百年的戏，其实也没那么长。',
+      '这座花园，还缺一点掌声。',
     ];
-    let tapIndex = 0;
-    canvas.style.pointerEvents = 'auto';
-    canvas.addEventListener('click', () => {
-      const mood = moods[Math.floor(Math.random() * moods.length)];
+    let moodIndex = 0;
+    let lineIndex = 0;
+
+    const nextMood = () => {
+      const mood = moods[moodIndex++ % moods.length];
       try {
         model.expression(mood);
       } catch {
-        /* 模型没有该表情时忽略 */
+        /* 缺该表情时忽略 */
       }
-      say(lines[tapIndex++ % lines.length]);
+    };
+    const nextLine = () => say(lines[lineIndex++ % lines.length]);
+
+    /* ---------- 工具栏 ---------- */
+    toolbar?.addEventListener('click', (event) => {
+      const btn = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-act]');
+      if (!btn) return;
+      switch (btn.dataset.act) {
+        case 'mood':
+          nextMood();
+          say('换了个表情。', 2200);
+          break;
+        case 'talk':
+          nextLine();
+          break;
+        case 'zoom-in':
+          zoom = Math.min(1.6, +(zoom + 0.12).toFixed(2));
+          frame();
+          break;
+        case 'zoom-out':
+          zoom = Math.max(0.72, +(zoom - 0.12).toFixed(2));
+          frame();
+          break;
+        case 'reset':
+          resetPos();
+          zoom = 1;
+          frame();
+          say('回到原位了。');
+          break;
+        case 'hide':
+          localStorage.setItem(STORAGE_KEY, 'off');
+          root.classList.remove('is-ready');
+          window.setTimeout(() => {
+            root.hidden = true;
+            model.destroy?.();
+            app.destroy(true);
+          }, 400);
+          break;
+      }
     });
 
-    if (!reduced) say('欢迎来到花园。点我一下试试。', 6000);
+    // 点身体（非拖拽）也算一次互动
+    canvas.style.pointerEvents = 'auto';
+    canvas.addEventListener('click', (event) => {
+      if (moved) {
+        event.stopPropagation();
+        return;
+      }
+      nextMood();
+      nextLine();
+    });
 
-    // 呼吸感：小幅度参数驱动，若被物理覆盖也无副作用
+    if (!reduced) say('可以把我拖到顺手的位置。', 6000);
+
+    /* ---------- 呼吸 ---------- */
     const core = model.internalModel?.coreModel;
     if (core && !reduced) {
-      const start = performance.now();
+      const startAt = performance.now();
       app.ticker.add(() => {
-        const t = (performance.now() - start) / 1000;
+        const t = (performance.now() - startAt) / 1000;
         try {
           core.setParameterValueById('ParamBreath', 0.5 + 0.5 * Math.sin(t * 1.5));
         } catch {
-          /* 忽略缺失参数 */
+          /* 缺该参数时忽略 */
         }
       });
     }
-
-    closer?.addEventListener('click', () => {
-      localStorage.setItem(STORAGE_KEY, 'off');
-      root.classList.remove('is-ready');
-      window.setTimeout(() => {
-        root.hidden = true;
-        model.destroy?.();
-        app.destroy(true);
-      }, 400);
-    });
 
     (window as unknown as { __furinaLive2D?: boolean }).__furinaLive2D = true;
   };
