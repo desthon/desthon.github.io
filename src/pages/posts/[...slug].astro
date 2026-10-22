@@ -1,0 +1,122 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, readingTime } from '../../consts';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+const { title, description, date, updated, tags } = post.data;
+const minutes = readingTime(post.body ?? '');
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+
+const all = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+const index = all.findIndex((item) => item.id === post.id);
+const prev = index > 0 ? all[index - 1] : undefined;
+const next = index >= 0 && index < all.length - 1 ? all[index + 1] : undefined;
+
+const related = all
+  .filter((item) => item.id !== post.id && item.data.tags.some((tag) => tags.includes(tag)))
+  .slice(0, 3);
+---
+<BaseLayout title={title} description={description} type="article" published={date} updated={updated} tags={tags}>
+  <div class="progress" slot="progress"></div>
+
+  <article>
+    <header class="article-hero">
+      <div class="shell">
+        <div class="inner">
+          <nav class="crumbs" aria-label="面包屑">
+            <a href="/">首页</a>
+            <span aria-hidden="true">/</span>
+            <a href="/posts/">文集</a>
+            <span aria-hidden="true">/</span>
+            <span>{tags[0] ?? '随笔'}</span>
+          </nav>
+
+          <h1 class="article-title">{title}</h1>
+          <p class="article-desc">{description}</p>
+
+          <div class="article-meta">
+            <time datetime={date.toISOString()}>{formatDate(date)}</time>
+            <span aria-hidden="true">·</span>
+            <span>{minutes} 分钟阅读</span>
+            {updated && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>修订于 {formatDate(updated)}</span>
+              </>
+            )}
+          </div>
+
+          <div class="chips" style="margin-top:18px">
+            {tags.map((tag) => <a class="chip" href={`/tags/${encodeURIComponent(tag)}/`}>{tag}</a>)}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="shell article-layout">
+      <div class="prose">
+        <Content />
+
+        <hr />
+
+        <nav class="post-nav" aria-label="上一篇与下一篇" style="display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between">
+          {prev ? (
+            <a class="link-more" href={`/posts/${prev.id}/`}>
+              <span aria-hidden="true">←</span> {prev.data.title}
+            </a>
+          ) : <span></span>}
+          {next ? (
+            <a class="link-more" href={`/posts/${next.id}/`}>
+              {next.data.title} <span aria-hidden="true">→</span>
+            </a>
+          ) : <span></span>}
+        </nav>
+      </div>
+
+      <aside class="aside-card">
+        {toc.length > 0 && (
+          <div>
+            <h4>本页目录</h4>
+            <ul>
+              {toc.map((heading) => (
+                <li style={heading.depth === 3 ? 'padding-left:14px' : undefined}>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {related.length > 0 && (
+          <div>
+            <h4>同一片水域</h4>
+            <ul>
+              {related.map((item) => (
+                <li><a href={`/posts/${item.id}/`}>{item.data.title}</a></li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <div class="aside-note">
+          水会记得一切。<br />
+          这些字也留了一份在 <a href="/rss.xml">RSS</a> 里。
+        </div>
+      </aside>
+    </div>
+  </article>
+</BaseLayout>

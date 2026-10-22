@@ -1,0 +1,52 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, readingTime } from '../../consts';
+
+const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+const byYear = new Map<number, typeof posts>();
+for (const post of posts) {
+  const year = post.data.date.getFullYear();
+  const bucket = byYear.get(year) ?? [];
+  bucket.push(post);
+  byYear.set(year, bucket);
+}
+const years = [...byYear.entries()].sort((a, b) => b[0] - a[0]);
+---
+<BaseLayout title="文集" description="按年份归档的全部文章：随笔、考据与设计笔记。">
+  <section class="article-hero">
+    <div class="shell">
+      <div class="inner">
+        <span class="eyebrow">Archive</span>
+        <h1 class="article-title" style="margin-top:14px">文集</h1>
+        <p class="article-desc">
+          共 {posts.length} 篇，按时间从新到旧。每一篇都是一次水位记录。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="shell" style="padding-block: clamp(40px, 6vw, 64px)">
+    {years.map(([year, items]) => (
+      <div class="year-block reveal">
+        <h2 class="year-label">{year}</h2>
+        <ul class="post-list">
+          {items.map((post) => (
+            <li>
+              <a class="post-row" href={`/posts/${post.id}/`}>
+                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                <strong>{post.data.title}</strong>
+                <span class="row-meta">
+                  {post.data.tags.join(' / ')} · {readingTime(post.body ?? '')} 分钟
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+</BaseLayout>

@@ -1,0 +1,32 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const posts = await getCollection('posts', ({ data }) => !data.draft);
+const counts = new Map<string, number>();
+for (const post of posts) {
+  for (const tag of post.data.tags) counts.set(tag, (counts.get(tag) ?? 0) + 1);
+}
+const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+---
+<BaseLayout title="标签" description="按水纹分类的全部标签。">
+  <section class="article-hero">
+    <div class="shell">
+      <div class="inner">
+        <span class="eyebrow">Tags</span>
+        <h1 class="article-title" style="margin-top:14px">标签</h1>
+        <p class="article-desc">共 {tags.length} 个标签，{posts.length} 篇文章。数字是水量，越大越深。</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="shell" style="padding-block: clamp(36px, 5vw, 56px)">
+    <div class="tag-cloud reveal">
+      {tags.map(([tag, count]) => (
+        <a href={`/tags/${encodeURIComponent(tag)}/`} style={`font-size:${0.86 + Math.min(count, 5) * 0.06}rem`}>
+          {tag} <var>{count}</var>
+        </a>
+      ))}
+    </div>
+  </div>
+</BaseLayout>

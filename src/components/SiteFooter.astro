@@ -1,0 +1,48 @@
+---
+import { SITE } from '../consts';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <svg class="footer-wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 44c120-30 240 30 360 30s240-60 360-60 240 60 360 60 240-60 360-30v46H0z"
+      fill="currentColor"></path>
+  </svg>
+  <div class="shell">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="/">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <path d="M16 2.6c4.6 6.2 9 10.4 9 15.4a9 9 0 0 1-18 0c0-5 4.4-9.2 9-15.4z" fill="#2f86c9"></path>
+            <circle cx="14" cy="18.4" r="1.5" fill="#fff"></circle>
+          </svg>
+          <span class="brand-text">
+            芙宁娜的花园
+            <small>Furina · Hydro</small>
+          </span>
+        </a>
+        <p>「水会记得一切。即使是那些你希望它忘记的。」<br />这里存放被水记住的字。</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>浏览</h4>
+        <ul>
+          {SITE.nav.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>订阅与源</h4>
+        <ul>
+          <li><a href="/rss.xml">RSS 订阅</a></li>
+          <li><a href="/sitemap-index.xml">站点地图</a></li>
+          <li><a href="https://github.com/desthon" rel="noopener">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© {year} {SITE.author} · 以 <span class="gold">Astro</span> 建造，以水命名</span>
+      <span>枫丹 · 芙宁娜 / Focalors</span>
+    </div>
+  </div>
+</footer>

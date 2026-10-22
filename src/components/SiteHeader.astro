@@ -1,0 +1,55 @@
+---
+import { SITE } from '../consts';
+
+const path = Astro.url.pathname;
+const current = (href: string) =>
+  href === '/' ? (path === '/' ? 'page' : undefined) : path.startsWith(href) ? 'page' : undefined;
+---
+<header class="site-header">
+  <div class="shell header-inner">
+    <a class="brand" href="/" aria-label={`${SITE.title} 首页`}>
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <defs>
+          <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#9be8f5"></stop>
+            <stop offset="55%" stop-color="#2f86c9"></stop>
+            <stop offset="100%" stop-color="#1b5d93"></stop>
+          </linearGradient>
+        </defs>
+        <path d="M16 2.6c4.6 6.2 9 10.4 9 15.4a9 9 0 0 1-18 0c0-5 4.4-9.2 9-15.4z" fill="url(#bm)"></path>
+        <path d="M16 10c2.6 3.6 4.6 5.8 4.6 8.4a4.6 4.6 0 0 1-9.2 0c0-2.6 2-4.8 4.6-8.4z"
+          fill="#ffffff" fill-opacity=".45"></path>
+      </svg>
+      <span class="brand-text">
+        芙宁娜的花园
+        <small>Furina · Hydro</small>
+      </span>
+    </a>
+
+    <nav class="nav" aria-label="主导航">
+      {SITE.nav.map((item) => <a href={item.href} aria-current={current(item.href)}>{item.label}</a>)}
+    </nav>
+
+    <div class="header-tools">
+      <a class="icon-btn" href="/rss.xml" aria-label="订阅 RSS" title="RSS 订阅">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+          stroke-linecap="round" aria-hidden="true">
+          <path d="M5 19a1 1 0 1 0 0-2 1 1 0 0 0 0 2z" fill="currentColor" stroke="none"></path>
+          <path d="M4 11a9 9 0 0 1 9 9"></path>
+          <path d="M4 4a16 16 0 0 1 16 16"></path>
+        </svg>
+      </a>
+      <button class="icon-btn theme-toggle" type="button" aria-label="切换深浅色主题" title="切换主题">
+        <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.2"></circle>
+          <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6"></path>
+        </svg>
+        <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M20.5 14.2A8.6 8.6 0 0 1 9.8 3.5a8.6 8.6 0 1 0 10.7 10.7z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,37 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, readingTime } from '../consts';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  showTags?: boolean;
+}
+
+const { post, showTags = true } = Astro.props;
+const { title, description, date, tags } = post.data;
+const minutes = readingTime(post.body ?? '');
+---
+<article class="post-card reveal">
+  <svg class="card-mark" viewBox="0 0 64 64" aria-hidden="true">
+    <path d="M32 6c8 10.6 15 17.6 15 25.4a15 15 0 0 1-30 0C17 23.6 24 16.6 32 6z"
+      fill="none" stroke="currentColor" stroke-width="1.6"></path>
+    <path d="M32 20c4.6 6 8 9.8 8 14.2a8 8 0 0 1-16 0c0-4.4 3.4-8.2 8-14.2z"
+      fill="currentColor" opacity=".5"></path>
+  </svg>
+  <div class="chips">
+    {tags.slice(0, 3).map((tag) => (
+      <span class="chip">{tag}</span>
+    ))}
+  </div>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  <div class="card-foot">
+    <span>
+      <time datetime={date.toISOString()}>{formatDate(date)}</time>
+      <span aria-hidden="true"> · </span>
+      {minutes} 分钟
+    </span>
+    <span class="arrow" aria-hidden="true">→</span>
+  </div>
+  <a class="card-link" href={`/posts/${post.id}/`} aria-label={`阅读《${title}》`}></a>
+</article>

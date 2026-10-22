@@ -1,0 +1,95 @@
+---
+// 水神徽记：环 · 泪滴 · 浪 · 王冠
+---
+<svg class="emblem" viewBox="0 0 400 400" role="img" aria-label="芙宁娜水之徽记">
+  <defs>
+    <radialGradient id="core" cx="50%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#a9ecfa" stop-opacity=".55"></stop>
+      <stop offset="55%" stop-color="#2f86c9" stop-opacity=".28"></stop>
+      <stop offset="100%" stop-color="#0b2039" stop-opacity=".05"></stop>
+    </radialGradient>
+    <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".9"></stop>
+      <stop offset="45%" stop-color="#9be8f5" stop-opacity=".75"></stop>
+      <stop offset="100%" stop-color="#e3c48d" stop-opacity=".9"></stop>
+    </linearGradient>
+    <linearGradient id="drop" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"></stop>
+      <stop offset="50%" stop-color="#cdedfb"></stop>
+      <stop offset="100%" stop-color="#7fd8ec"></stop>
+    </linearGradient>
+    <linearGradient id="wave" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7fd8ec" stop-opacity="0"></stop>
+      <stop offset="35%" stop-color="#9be8f5" stop-opacity=".8"></stop>
+      <stop offset="70%" stop-color="#cdedfb" stop-opacity=".65"></stop>
+      <stop offset="100%" stop-color="#e3c48d" stop-opacity="0"></stop>
+    </linearGradient>
+    <linearGradient id="crown" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#e3c48d"></stop>
+      <stop offset="50%" stop-color="#fff6e2"></stop>
+      <stop offset="100%" stop-color="#c9a063"></stop>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="7" result="b"></feGaussianBlur>
+      <feMerge><feMergeNode in="b"></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+    </filter>
+  </defs>
+
+  <!-- 外环 -->
+  <g class="spin-slow">
+    <circle cx="200" cy="200" r="188" fill="none" stroke="url(#ring)" stroke-width="1" opacity=".55"
+      stroke-dasharray="3 9"></circle>
+    <circle cx="200" cy="200" r="172" fill="none" stroke="#9be8f5" stroke-width=".7" opacity=".28"></circle>
+    <g fill="#e3c48d" opacity=".85">
+      <circle cx="200" cy="12" r="2.4"></circle>
+      <circle cx="388" cy="200" r="2.4"></circle>
+      <circle cx="200" cy="388" r="2.4"></circle>
+      <circle cx="12" cy="200" r="2.4"></circle>
+    </g>
+  </g>
+
+  <g class="spin-reverse">
+    <circle cx="200" cy="200" r="150" fill="none" stroke="url(#ring)" stroke-width="1.2" opacity=".7"></circle>
+    <circle cx="200" cy="200" r="141" fill="none" stroke="#ffffff" stroke-width=".5" opacity=".22"></circle>
+  </g>
+
+  <!-- 内核 -->
+  <circle cx="200" cy="200" r="138" fill="url(#core)"></circle>
+  <circle cx="200" cy="200" r="138" fill="none" stroke="#cdedfb" stroke-width=".8" opacity=".4"></circle>
+
+  <!-- 水波 -->
+  <g opacity=".85" filter="url(#glow)">
+    <path d="M66 262 C 106 236, 138 288, 200 262 S 294 236, 334 262"
+      fill="none" stroke="url(#wave)" stroke-width="2.4" stroke-linecap="round"></path>
+    <path d="M72 288 C 112 264, 146 312, 200 288 S 288 264, 328 288"
+      fill="none" stroke="url(#wave)" stroke-width="1.4" stroke-linecap="round" opacity=".6"></path>
+  </g>
+
+  <!-- 王冠 -->
+  <g filter="url(#glow)">
+    <path d="M156 130 L176 96 L200 122 L224 96 L244 130 Z" fill="none" stroke="url(#crown)"
+      stroke-width="2.4" stroke-linejoin="round"></path>
+    <circle cx="176" cy="90" r="4" fill="url(#crown)"></circle>
+    <circle cx="224" cy="90" r="4" fill="url(#crown)"></circle>
+    <circle cx="200" cy="116" r="3.4" fill="#9be8f5"></circle>
+  </g>
+
+  <!-- 中央泪滴 -->
+  <g filter="url(#glow)">
+    <path d="M200 152 C 226 186, 250 208, 250 234 A 50 50 0 0 1 150 234 C 150 208, 174 186, 200 152 Z"
+      fill="url(#drop)" fill-opacity=".92"></path>
+    <path d="M200 176 C 217 200, 232 216, 232 235 A 32 32 0 0 1 168 235 C 168 216, 183 200, 200 176 Z"
+      fill="#ffffff" fill-opacity=".35"></path>
+    <ellipse cx="186" cy="222" rx="9" ry="14" fill="#ffffff" opacity=".55"
+      transform="rotate(-18 186 222)"></ellipse>
+  </g>
+
+  <!-- 星屑 -->
+  <g fill="#ffffff" opacity=".75">
+    <circle cx="292" cy="116" r="1.8"></circle>
+    <circle cx="112" cy="150" r="1.4"></circle>
+    <circle cx="316" cy="300" r="1.6"></circle>
+    <circle cx="96" cy="308" r="1.2"></circle>
+    <path d="M300 176 l2.6 6.4 6.4 2.6 -6.4 2.6 -2.6 6.4 -2.6 -6.4 -6.4 -2.6 6.4 -2.6 z"></path>
+  </g>
+</svg>

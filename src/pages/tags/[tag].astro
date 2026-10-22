@@ -1,0 +1,50 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts', ({ data }) => !data.draft);
+  const tags = new Set<string>();
+  for (const post of posts) post.data.tags.forEach((tag) => tags.add(tag));
+
+  return [...tags].map((tag) => ({
+    params: { tag },
+    props: {
+      tag,
+      posts: posts
+        .filter((post) => post.data.tags.includes(tag))
+        .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf()),
+    },
+  }));
+}
+
+interface Props {
+  tag: string;
+  posts: CollectionEntry<'posts'>[];
+}
+
+const { tag, posts } = Astro.props;
+---
+<BaseLayout title={`标签：${tag}`} description={`所有标记为「${tag}」的文章。`}>
+  <section class="article-hero">
+    <div class="shell">
+      <div class="inner">
+        <nav class="crumbs" aria-label="面包屑">
+          <a href="/">首页</a>
+          <span aria-hidden="true">/</span>
+          <a href="/tags/">标签</a>
+        </nav>
+        <span class="eyebrow">Tag</span>
+        <h1 class="article-title" style="margin-top:14px">{tag}</h1>
+        <p class="article-desc">这一片水域里共有 {posts.length} 篇。</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="shell" style="padding-block: clamp(36px, 5vw, 56px)">
+    <div class="card-grid">
+      {posts.map((post) => <PostCard post={post} />)}
+    </div>
+  </div>
+</BaseLayout>
