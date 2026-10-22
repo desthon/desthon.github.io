@@ -1,9 +1,17 @@
-# 芙宁娜的花园 · Furina Blog
+# desthon · 芙宁娜的花园
 
-一座以《原神》枫丹水神**芙宁娜 / Focalors** 为主题的静态个人博客。
+**desthon 的个人博客**，以《原神》枫丹水神**芙宁娜 / Focalors** 为主题。
 用 [Astro](https://astro.build) 构建，纯静态输出，零 UI 框架、零第三方统计、零后端。
 
+站点：<https://desthon.github.io>
+
 > 水会记得一切。即使是那些你希望它忘记的。—— 芙宁娜
+
+## 内容
+
+- **相册**：芙宁娜的官方立绘、卡面、壁纸与纪念绘，共 10 张，支持分类筛选与大图查看（方向键 / 触屏滑动）。
+- **文章**：随笔与技术笔记，Markdown 写作（当前为空，等待第一篇）。
+- **关于**：站主是谁、这个站怎么来的、配色为什么是这四个颜色。
 
 ## 视觉
 
@@ -20,16 +28,16 @@
 
 - 标题字体 **霞鹜文楷**（按 `unicode-range` 分片加载，只下载用到的字），正文用系统无衬线。
 - 深色模式不是反色，而是另一套「夜晚法庭」配色（深海底、提亮的青与金）。
-- 首字下沉、手写水纹、缓慢自转的水神徽记、滚动入场的位移，全部用 CSS 完成，且尊重 `prefers-reduced-motion`。
-- 文字对比度按 WCAG AA 校准（正文 14.9:1，次要文字 4.9:1）。
+- 相册是瀑布流（CSS columns），封面不裁剪图片，点开进灯箱。
+- 动效全部 CSS 实现，尊重 `prefers-reduced-motion`；文字对比度按 WCAG AA 校准。
 
 ## 技术栈
 
-- **框架**：Astro 7（静态输出）
+- **框架**：Astro 7（静态输出，6 个页面、零客户端框架）
 - **内容**：Markdown + Content Collections（`glob` loader + Zod schema）
-- **样式**：手写 CSS 变量系统，约 30KB，无 Tailwind
-- **RSS**：`@astrojs/rss`
-- **站点地图**：`@astrojs/sitemap`
+- **相册数据**：`src/data/gallery.ts`（一份带尺寸的清单，避免布局跳动）
+- **样式**：手写 CSS 变量系统，约 36 KB，无 Tailwind
+- **RSS / 站点地图**：`@astrojs/rss`、`@astrojs/sitemap`
 - **部署**：GitHub Pages（GitHub Actions）
 
 ## 本地开发
@@ -41,9 +49,25 @@ npm run build    # 产物在 dist/
 npm run preview  # 预览构建结果
 ```
 
+## 加一张图
+
+1. 图片压成 webp 放进 `public/images/gallery/`（建议长边 ≤ 1800，质量 80）：
+
+   ```bash
+   node -e "require('sharp')('in.png').resize({width:1200}).webp({quality:84}).toFile('public/images/gallery/name.webp')"
+   ```
+
+2. 在 `src/data/gallery.ts` 的 `GALLERY` 里追加一条（`width` / `height` 必填，用来占位防抖动）：
+
+   ```ts
+   { file: 'name.webp', title: '标题', caption: '一句话描述', category: '立绘', width: 1200, height: 1139 }
+   ```
+
+首页自动展示前 6 张，`/gallery/` 展示全部并按 `category` 筛选。
+
 ## 写一篇文章
 
-在 `src/content/posts/` 下新建 `your-slug.md`：
+在 `src/content/posts/` 下新建 `your-slug.md`（文件名即 URL）：
 
 ```markdown
 ---
@@ -51,34 +75,40 @@ title: 标题
 description: 一句话摘要，会出现在列表、RSS 与 meta 描述里
 date: 2026-10-18
 tags: [随笔, 芙宁娜]
-featured: true # 可选，首页「精选篇章」会取前 3 篇
-draft: false # 可选，true 则整篇不参与构建
+featured: true # 可选，首页「精选」取前 3 篇
+draft: false # 可选，true 则不参与构建
 ---
-
-正文……
 ```
 
-文件名就是 URL：`your-slug.md` → `/posts/your-slug/`。
+无文章时首页与 `/posts/` 会显示空状态，不会报错。
 
 ## 结构
 
 ```
 src/
-├─ components/   PostCard · SiteHeader · SiteFooter · HydroEmblem
+├─ components/   GalleryGrid · Lightbox · HydroEmblem · PostCard · SiteHeader · SiteFooter
 ├─ content/posts/ 文章（Markdown）
-├─ layouts/      BaseLayout（head/SEO/主题脚本/入场动效）
-├─ pages/        首页、文集、标签、关于、404、rss.xml
+├─ data/gallery.ts 相册清单
+├─ layouts/      BaseLayout（head/SEO/主题/入场动效/灯箱）
+├─ pages/        首页、相册、文章、标签、关于、404、rss.xml
 ├─ styles/       global.css（设计系统）
 └─ consts.ts     站点信息与日期/阅读时长工具
+public/
+├─ images/       英雄立绘、横幅
+└─ images/gallery/ 相册图片（webp）
 ```
 
 ## 部署
 
-仓库推送 `main` 后，`.github/workflows/deploy.yml` 会自动构建并发布到 GitHub Pages。
-首次使用需在仓库 **Settings → Pages → Build and deployment** 将 Source 设为 **GitHub Actions**。
+推送 `main` 后 `.github/workflows/deploy.yml` 自动构建并发布到 GitHub Pages。
+仓库 Pages 已设为 **Source: GitHub Actions**（`build_type=workflow`）。
 
-站点域名：<https://desthon.github.io>
+一次性推送（token 只出现在命令行，不落盘）：
 
-## 许可
+```bash
+GITHUB_TOKEN=<你的 PAT> bash scripts/push.sh
+```
 
-文章版权归作者所有；代码部分可自由取用。角色与世界观设定版权归 © HoYoverse 所有，本站为非商业同人作品。
+## 版权
+
+文字与代码归 desthon 所有。角色、美术与世界观版权归 © HoYoverse 所有，本站为非商业同人作品，图片仅作展示。

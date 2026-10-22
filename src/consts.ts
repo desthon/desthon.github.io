@@ -1,18 +1,22 @@
 export const SITE = {
-  title: '芙宁娜的花园',
+  title: 'desthon',
+  subtitle: '芙宁娜的花园',
   tagline: '水之记忆 · Focalors',
   description:
-    '一座以芙宁娜为主题的私人花园：存放水神的传说、歌剧院的回声，以及所有被水记住的、微小的事。',
+    'desthon 的个人博客，以芙宁娜为主题：一处放照片、写字和记技术笔记的水边小屋。',
   author: 'desthon',
   url: 'https://desthon.github.io',
   locale: 'zh-CN',
   nav: [
     { label: '首页', href: '/' },
-    { label: '文集', href: '/posts/' },
-    { label: '标签', href: '/tags/' },
+    { label: '相册', href: '/gallery/' },
+    { label: '文章', href: '/posts/' },
     { label: '关于', href: '/about/' },
   ],
 } as const;
+
+export const CREDIT =
+  '图源：《原神》官方美术与角色资料（© HoYoverse）。本站为非商业同人站点。';
 
 export function formatDate(date: Date): string {
   return new Intl.DateTimeFormat('zh-CN', {

@@ -21,6 +21,14 @@ const tags = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeComp
   </section>
 
   <div class="shell" style="padding-block: clamp(36px, 5vw, 56px)">
+    {tags.length === 0 && (
+      <div class="empty-state">
+        <h3>还没有标签</h3>
+        <p>文章写出来之后，标签会自己长出来。</p>
+        <a class="btn btn-primary" href="/gallery/">去看相册 <span aria-hidden="true">→</span></a>
+      </div>
+    )}
+
     <div class="tag-cloud reveal">
       {tags.map(([tag, count]) => (
         <a href={`/tags/${encodeURIComponent(tag)}/`} style={`font-size:${0.86 + Math.min(count, 5) * 0.06}rem`}>

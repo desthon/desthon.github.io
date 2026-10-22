@@ -1,33 +1,34 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE } from '../consts';
+import { GALLERY } from '../data/gallery';
+import { CREDIT, SITE } from '../consts';
 
 const profile = [
-  ['名字', '芙宁娜 / Furina'],
-  ['别称', '水神 · Focalors'],
+  ['名字', 'desthon'],
+  ['主题', '芙宁娜 / Furina'],
   ['地区', '枫丹 · 歌剧院'],
   ['元素', '水 / Hydro'],
-  ['身份', '审判官 · 演员 · 神明（兼职）'],
-  ['喜好', '甜点、红茶、掌声'],
+  ['在做', '网络、前端，和一些乱七八糟的折腾'],
   ['信条', '水会记得一切'],
 ];
 
-const host = [
+const site = [
   ['站主', SITE.author],
   ['框架', 'Astro（静态站点）'],
   ['内容', 'Markdown + 内容集合'],
+  ['相册', `${GALLERY.length} 张官方美术`],
   ['托管', 'GitHub Pages'],
   ['样式', '手写 CSS，无 UI 框架'],
 ];
 ---
-<BaseLayout title="关于" description="关于这座花园、它为什么是蓝色的，以及站主是谁。">
+<BaseLayout title="关于" description="关于 desthon，以及这座以芙宁娜为主题的水边小屋。">
   <section class="article-hero">
     <div class="shell">
       <div class="inner">
         <span class="eyebrow">About</span>
-        <h1 class="article-title" style="margin-top:14px">关于这座花园</h1>
+        <h1 class="article-title" style="margin-top:14px">我是 desthon</h1>
         <p class="article-desc">
-          一座以芙宁娜为主题的私人博客。它不追热点，不接广告，不做统计，只负责把一些字留在水里。
+          一个在水边折腾网络和前端的人。这个站是我的个人博客——外壳是芙宁娜，里面放相册、随笔和一点技术笔记。
         </p>
       </div>
     </div>
@@ -37,19 +38,26 @@ const host = [
     <div class="prose">
       <h2>为什么是芙宁娜</h2>
       <p>
-        因为她是我见过最"不像神"的神。她会紧张、会逞强、会在深夜里偷偷一个人待着，
-        却又把一件几乎不可能的事坚持了五百年。喜欢她，不是喜欢一个完美的偶像，
-        而是喜欢一种"明知会疼还继续"的姿态。
+        因为她是我见过最"不像神"的神。她会紧张、会逞强、会在深夜里一个人待着，
+        却把一件几乎做不到的事坚持了五百年。喜欢她不是为了崇拜完美，
+        而是喜欢那种"明知会疼还继续"的姿态——做项目、写代码、过日子，多少都用得上。
       </p>
 
-      <h2>这里写什么</h2>
+      <h2>这里放什么</h2>
       <ul>
-        <li><strong>剧情考据</strong>：枫丹的世界观、审判制度、水的隐喻。</li>
+        <li><strong>相册</strong>：芙宁娜的官方立绘、卡面、壁纸与纪念绘，点开可看大图。</li>
         <li><strong>随笔</strong>：一些跟角色有关、但其实在写自己的东西。</li>
-        <li><strong>设计笔记</strong>：这个站长成这样，是有理由的。</li>
+        <li><strong>技术笔记</strong>：网络、前端、部署这些折腾过程的记录。</li>
       </ul>
 
-      <h2>视觉怎么来的</h2>
+      <h2>这个站怎么来的</h2>
+      <p>
+        全站是纯静态的：Markdown 写作，Astro 构建，产物是一堆 HTML，
+        扔到任何一台服务器都能跑。没有数据库，没有后端，没有第三方统计，
+        也没有一个客户端 JavaScript 框架——只有看图、切主题这种地方才加载几行脚本。
+      </p>
+
+      <h2>配色</h2>
       <p>
         主色只有四个：珍珠白、法庭深蓝、水元素青、金饰。金色面积永远不超过百分之三，
         因为它只是灯光，不是墙面。中文标题用霞鹜文楷，正文用系统无衬线，
@@ -60,24 +68,20 @@ const host = [
         <p>「我不需要所有人理解我。我只需要，明天还能站上那个位置。」</p>
       </blockquote>
 
-      <h2>关于技术</h2>
-      <p>
-        全站是纯静态的：Markdown 写作，Astro 构建，产物是一堆 HTML，
-        扔到任何一台服务器都能跑。没有数据库，没有后端，没有第三方统计。
-        你想读就走 <a href="/rss.xml">RSS</a>，数据在你自己手里。
-      </p>
-
       <h2>联系</h2>
       <p>
         可以在 <a href="https://github.com/desthon" rel="noopener">GitHub</a> 上找到我。
-        不设评论区，是因为我相信真正想说话的人，会自己找到路。
+        不设评论区，是因为真正想说话的人，会自己找到路。
       </p>
+
+      <h2>版权</h2>
+      <p style="font-size:0.9rem;color:var(--ink-3)">{CREDIT}文字与代码归 desthon 所有。</p>
     </div>
 
     <aside class="aside-card">
       <div class="profile-card">
-        <div class="name">芙宁娜</div>
-        <div class="sub">Furina · Hydro Archon</div>
+        <div class="name">desthon</div>
+        <div class="sub">Personal Blog · Furina</div>
         <dl>
           {profile.map(([key, value]) => (
             <>
@@ -91,7 +95,7 @@ const host = [
       <div class="profile-card">
         <div class="sub" style="margin-bottom:16px">Site</div>
         <dl>
-          {host.map(([key, value]) => (
+          {site.map(([key, value]) => (
             <>
               <dt>{key}</dt>
               <dd>{value}</dd>

@@ -2,8 +2,10 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HydroEmblem from '../components/HydroEmblem.astro';
+import GalleryGrid from '../components/GalleryGrid.astro';
 import PostCard from '../components/PostCard.astro';
 import { SITE, formatDate, readingTime } from '../consts';
+import { GALLERY, HERO_SHOT } from '../data/gallery';
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
@@ -11,6 +13,7 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft)).sort(
 
 const featured = posts.filter((post) => post.data.featured).slice(0, 3);
 const latest = posts.slice(0, 6);
+const hasPosts = posts.length > 0;
 
 const tagCounts = new Map<string, number>();
 for (const post of posts) {
@@ -19,35 +22,31 @@ for (const post of posts) {
   }
 }
 const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 14);
-const totalChars = posts.reduce(
-  (sum, post) => sum + ((post.body ?? '').match(/[\u4e00-\u9fa5]/g)?.length ?? 0),
-  0,
-);
-const totalKiloChars = (totalChars / 1000).toFixed(1);
 ---
 <BaseLayout description={SITE.description}>
   <section class="hero">
     <div class="shell hero-grid">
       <div class="hero-copy">
-        <span class="eyebrow hero-eyebrow">Fontaine · 水之记忆</span>
+        <span class="eyebrow hero-eyebrow">Personal Blog · 芙宁娜主题</span>
         <h1 class="hero-title">
-          让每一滴水<br />
-          <span class="grad">都记得你的名字</span>
+          你好，我是<br />
+          <span class="grad">desthon</span>
         </h1>
         <p class="hero-lead">
-          我是在枫丹的雨里写字的人。这里存放水神的传说、歌剧院的回声，
-          以及所有被水记住的、微小的事。
+          这里是我的水边小屋：芙宁娜的相册、随手写下的字，和一些技术笔记。
+          水会记得一切，所以我把它们都放进来了。
         </p>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="/posts/">
-            开始阅读
+          <a class="btn btn-primary" href="/gallery/">
+            看相册
             <span aria-hidden="true">→</span>
           </a>
-          <a class="btn btn-ghost" href="/about/">这座花园</a>
+          <a class="btn btn-ghost" href="/about/">关于我</a>
         </div>
         <div class="hero-meta">
-          <span><i></i>随笔 · 考据 · 设计</span>
-          <span><i></i>更新于 {formatDate(posts[0]?.data.date ?? new Date())}</span>
+          <span><i></i>{GALLERY.length} 张美图</span>
+          <span><i></i>枫丹 · 水之记忆</span>
+          <span><i></i>更新于 {posts[0] ? formatDate(posts[0].data.date) : '刚刚'}</span>
         </div>
       </div>
 
@@ -55,8 +54,34 @@ const totalKiloChars = (totalChars / 1000).toFixed(1);
         <span class="bubble"></span>
         <span class="bubble"></span>
         <span class="bubble"></span>
-        <span class="bubble"></span>
-        <HydroEmblem />
+
+        <figure class="portrait-card">
+          <button
+            class="portrait-open"
+            type="button"
+            data-lightbox
+            data-src="/images/gallery/splash.webp"
+            data-title={HERO_SHOT.title}
+            data-caption="她举起权杖，法庭的灯亮了一半。"
+            aria-label="查看芙宁娜立绘大图"
+          >
+            <img
+              src={`/images/${HERO_SHOT.file}`}
+              alt="芙宁娜角色立绘"
+              width={HERO_SHOT.width}
+              height={HERO_SHOT.height}
+              fetchpriority="high"
+              decoding="async"
+            />
+          </button>
+          <figcaption>
+            <span class="portrait-name">{HERO_SHOT.title}</span>
+            <span class="portrait-note">{HERO_SHOT.note}</span>
+          </figcaption>
+          <span class="portrait-badge" aria-hidden="true">
+            <HydroEmblem />
+          </span>
+        </figure>
       </div>
     </div>
 
@@ -74,9 +99,9 @@ const totalKiloChars = (totalChars / 1000).toFixed(1);
 
   <div class="shell">
     <dl class="stats reveal">
+      <div class="stat"><dt>相册</dt><dd>{GALLERY.length} 张</dd></div>
       <div class="stat"><dt>文章</dt><dd>{posts.length} 篇</dd></div>
-      <div class="stat"><dt>标签</dt><dd>{tagCounts.size} 个</dd></div>
-      <div class="stat"><dt>总字数</dt><dd>{totalKiloChars} 千字</dd></div>
+      <div class="stat"><dt>主题</dt><dd>芙宁娜</dd></div>
       <div class="stat"><dt>坐标</dt><dd>枫丹 · 歌剧院</dd></div>
     </dl>
   </div>
@@ -84,63 +109,87 @@ const totalKiloChars = (totalChars / 1000).toFixed(1);
   <section class="section shell">
     <div class="section-head reveal">
       <div>
-        <span class="eyebrow">Curated</span>
-        <h2 class="section-title">精选<em>篇章</em></h2>
-        <p class="section-sub">如果你只有十分钟，从这里开始。</p>
+        <span class="eyebrow">Gallery</span>
+        <h2 class="section-title">水镜<em>相册</em></h2>
+        <p class="section-sub">官方美术与壁纸，点开可看大图。</p>
       </div>
-      <a class="link-more" href="/posts/">全部文集 <span aria-hidden="true">→</span></a>
+      <a class="link-more" href="/gallery/">全部 {GALLERY.length} 张 <span aria-hidden="true">→</span></a>
     </div>
 
-    <div class="card-grid">
-      {featured.map((post) => <PostCard post={post} />)}
+    <div class="reveal">
+      <GalleryGrid limit={6} />
     </div>
   </section>
 
-  <section class="section shell" style="padding-top:0">
-    <div class="section-head reveal">
-      <div>
-        <span class="eyebrow">Latest</span>
-        <h2 class="section-title">最近<em>写下</em></h2>
-      </div>
-      <a class="link-more" href="/posts/">按年浏览 <span aria-hidden="true">→</span></a>
-    </div>
-
-    <ul class="post-list reveal">
-      {latest.map((post) => (
-        <li>
-          <a class="post-row" href={`/posts/${post.id}/`}>
-            <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-            <strong>{post.data.title}</strong>
-            <span class="row-meta">
-              {post.data.tags[0] ?? '随笔'} · {readingTime(post.body ?? '')} 分钟
-            </span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </section>
-
-  <section class="section shell" style="padding-top:0">
-    <div class="quote-band reveal">
-      <blockquote>
-        水会记得一切。即使是那些你希望它忘记的。
+  <section class="shell" style="padding-bottom: clamp(40px, 6vw, 72px)">
+    <div class="banner-strip reveal">
+      <img src="/images/banner.webp" alt="枫丹水面与芙宁娜的壁纸" loading="lazy" decoding="async" />
+      <div class="banner-copy">
+        <blockquote>水会记得一切。即使是那些你希望它忘记的。</blockquote>
         <cite>—— 芙宁娜 · 水神 / Focalors</cite>
-      </blockquote>
+      </div>
     </div>
   </section>
 
   <section class="section shell" style="padding-top:0">
     <div class="section-head reveal">
       <div>
-        <span class="eyebrow">Tags</span>
-        <h2 class="section-title">按<em>水纹</em>分类</h2>
+        <span class="eyebrow">Writing</span>
+        <h2 class="section-title">随手<em>写写</em></h2>
       </div>
-      <a class="link-more" href="/tags/">全部标签 <span aria-hidden="true">→</span></a>
+      {hasPosts && <a class="link-more" href="/posts/">全部文章 <span aria-hidden="true">→</span></a>}
     </div>
-    <div class="tag-cloud reveal">
-      {tags.map(([tag, count]) => (
-        <a href={`/tags/${encodeURIComponent(tag)}/`}>{tag} <var>{count}</var></a>
-      ))}
-    </div>
+
+    {hasPosts ? (
+      <>
+        {featured.length > 0 && (
+          <div class="card-grid" style="margin-bottom:24px">
+            {featured.map((post) => <PostCard post={post} />)}
+          </div>
+        )}
+        <ul class="post-list reveal">
+          {latest.map((post) => (
+            <li>
+              <a class="post-row" href={`/posts/${post.id}/`}>
+                <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                <strong>{post.data.title}</strong>
+                <span class="row-meta">
+                  {post.data.tags[0] ?? '随笔'} · {readingTime(post.body ?? '')} 分钟
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </>
+    ) : (
+      <div class="empty-state reveal">
+        <svg viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M32 6c8 10.6 15 17.6 15 25.4a15 15 0 0 1-30 0C17 23.6 24 16.6 32 6z"
+            fill="none" stroke="currentColor" stroke-width="1.6"></path>
+          <path d="M32 20c4.6 6 8 9.8 8 14.2a8 8 0 0 1-16 0c0-4.4 3.4-8.2 8-14.2z"
+            fill="currentColor" opacity=".35"></path>
+        </svg>
+        <h3>还没有文章</h3>
+        <p>相册已经先搬进来了。文字还在水里，等它浮上来。</p>
+        <a class="btn btn-primary" href="/gallery/">先去看图 <span aria-hidden="true">→</span></a>
+      </div>
+    )}
   </section>
+
+  {tags.length > 0 && (
+    <section class="section shell" style="padding-top:0">
+      <div class="section-head reveal">
+        <div>
+          <span class="eyebrow">Tags</span>
+          <h2 class="section-title">按<em>水纹</em>分类</h2>
+        </div>
+        <a class="link-more" href="/tags/">全部标签 <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="tag-cloud reveal">
+        {tags.map(([tag, count]) => (
+          <a href={`/tags/${encodeURIComponent(tag)}/`}>{tag} <var>{count}</var></a>
+        ))}
+      </div>
+    </section>
+  )}
 </BaseLayout>

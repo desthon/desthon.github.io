@@ -1,0 +1,41 @@
+---
+import { GALLERY, type Shot } from '../data/gallery';
+
+interface Props {
+  shots?: Shot[];
+  /** 首页只展示一部分 */
+  limit?: number;
+}
+
+const { shots = GALLERY, limit } = Astro.props;
+const list = limit ? shots.slice(0, limit) : shots;
+---
+<div class="gallery">
+  {list.map((shot, index) => (
+    <figure class="shot" data-cat={shot.category}>
+      <button
+        class="shot-open"
+        type="button"
+        data-lightbox
+        data-src={`/images/gallery/${shot.file}`}
+        data-caption={shot.caption}
+        data-title={shot.title}
+        data-index={index}
+        aria-label={`查看大图：${shot.title}`}
+      >
+        <img
+          src={`/images/gallery/${shot.file}`}
+          alt={`${shot.title}——${shot.caption}`}
+          width={shot.width}
+          height={shot.height}
+          loading="lazy"
+          decoding="async"
+        />
+      </button>
+      <figcaption>
+        <span class="shot-title">{shot.title}</span>
+        <span class="shot-cat">{shot.category}</span>
+      </figcaption>
+    </figure>
+  ))}
+</div>

@@ -1,0 +1,93 @@
+---
+// 全站大图查看器：任何带 data-lightbox 的按钮都会接入
+---
+<div class="lightbox" data-lightbox-root hidden>
+  <div class="lightbox-backdrop" data-close></div>
+  <figure class="lightbox-figure" role="dialog" aria-modal="true" aria-label="图片查看">
+    <img alt="" data-lightbox-image />
+    <figcaption>
+      <strong data-lightbox-title></strong>
+      <span data-lightbox-caption></span>
+    </figcaption>
+  </figure>
+  <button class="lightbox-close" type="button" data-close aria-label="关闭">×</button>
+  <button class="lightbox-nav prev" type="button" data-prev aria-label="上一张">‹</button>
+  <button class="lightbox-nav next" type="button" data-next aria-label="下一张">›</button>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-lightbox-root]');
+  const triggers = [...document.querySelectorAll<HTMLButtonElement>('[data-lightbox]')];
+
+  if (root && triggers.length) {
+    const image = root.querySelector<HTMLImageElement>('[data-lightbox-image]')!;
+    const titleEl = root.querySelector<HTMLElement>('[data-lightbox-title]')!;
+    const captionEl = root.querySelector<HTMLElement>('[data-lightbox-caption]')!;
+    let current = 0;
+    let lastFocus: Element | null = null;
+
+    const show = (index: number) => {
+      current = (index + triggers.length) % triggers.length;
+      const trigger = triggers[current];
+      const src = trigger.dataset.src ?? '';
+      image.src = src;
+      image.alt = trigger.dataset.title ?? '';
+      titleEl.textContent = trigger.dataset.title ?? '';
+      captionEl.textContent = trigger.dataset.caption ?? '';
+      // 预载下一张
+      const nextSrc = triggers[(current + 1) % triggers.length]?.dataset.src;
+      if (nextSrc) {
+        const pre = new Image();
+        pre.src = nextSrc;
+      }
+    };
+
+    const open = (index: number) => {
+      lastFocus = document.activeElement;
+      show(index);
+      root.hidden = false;
+      document.body.classList.add('lightbox-open');
+      root.querySelector<HTMLButtonElement>('.lightbox-close')?.focus();
+    };
+
+    const close = () => {
+      root.hidden = true;
+      document.body.classList.remove('lightbox-open');
+      image.removeAttribute('src');
+      if (lastFocus instanceof HTMLElement) lastFocus.focus();
+    };
+
+    triggers.forEach((trigger, index) => {
+      trigger.addEventListener('click', () => open(index));
+    });
+
+    root.querySelectorAll('[data-close]').forEach((el) => el.addEventListener('click', close));
+    root.querySelector('[data-prev]')?.addEventListener('click', () => show(current - 1));
+    root.querySelector('[data-next]')?.addEventListener('click', () => show(current + 1));
+
+    document.addEventListener('keydown', (event) => {
+      if (root.hidden) return;
+      if (event.key === 'Escape') close();
+      if (event.key === 'ArrowLeft') show(current - 1);
+      if (event.key === 'ArrowRight') show(current + 1);
+    });
+
+    // 触屏左右滑动
+    let startX = 0;
+    root.addEventListener(
+      'touchstart',
+      (event) => {
+        startX = event.touches[0].clientX;
+      },
+      { passive: true },
+    );
+    root.addEventListener(
+      'touchend',
+      (event) => {
+        const dx = event.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 48) show(current + (dx < 0 ? 1 : -1));
+      },
+      { passive: true },
+    );
+  }
+</script>
